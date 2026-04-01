@@ -1,0 +1,336 @@
+---
+import electricityData from '../../data/electricity-tariffs.json';
+import provincesData from '../../data/provinces.json';
+import { formatCurrency, formatNumber, getProvinceName } from '@utils/formatters';
+import { getDistributionCompany } from '@utils/electricity';
+
+const tariffs = electricityData.tariffs;
+const provinces = provincesData.provinces;
+const lastUpdated = electricityData.lastUpdated;
+---
+
+<div
+  x-data="electricityCalculator()"
+  class="bg-white rounded-xl shadow-sm border border-slate-200 p-6"
+>
+  <h2 class="text-xl font-bold text-slate-800 mb-6">Elektrik Faturası Hesapla</h2>
+
+  <form class="space-y-6" @submit.prevent="calculate">
+    <div>
+      <label class="block text-sm font-medium text-slate-700 mb-2">Abone Tipi</label>
+      <div class="grid grid-cols-3 gap-3">
+        <template x-for="type in ['mesken', 'ticarethane', 'sanayi']" :key="type">
+          <button
+            type="button"
+            @click="subscriberType = type"
+            :class="subscriberType === type ? 'bg-primary-600 text-white border-primary-600' : 'bg-white text-slate-700 border-slate-300 hover:border-primary-400'"
+            class="border-2 rounded-lg py-3 px-4 text-center font-medium transition-all"
+            x-text="type === 'mesken' ? 'Mesken' : type === 'ticarethane' ? 'Ticarethane' : 'Sanayi'"
+          ></button>
+        </template>
+      </div>
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-slate-700 mb-2">Sayaç Tipi</label>
+      <div class="grid grid-cols-2 gap-3">
+        <button
+          type="button"
+          @click="meterType = 'tek-zamanli'"
+          :class="meterType === 'tek-zamanli' ? 'bg-primary-600 text-white border-primary-600' : 'bg-white text-slate-700 border-slate-300 hover:border-primary-400'"
+          class="border-2 rounded-lg py-3 px-4 text-center font-medium transition-all"
+        >
+          Tek Zamanlı
+        </button>
+        <button
+          type="button"
+          @click="meterType = 'cok-zamanli'"
+          :class="meterType === 'cok-zamanli' ? 'bg-primary-600 text-white border-primary-600' : 'bg-white text-slate-700 border-slate-300 hover:border-primary-400'"
+          class="border-2 rounded-lg py-3 px-4 text-center font-medium transition-all"
+        >
+          Çok Zamanlı (Puant)
+        </button>
+      </div>
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-slate-700 mb-2">İl</label>
+      <select
+        x-model="selectedProvince"
+        @change="updateDistributionCompany()"
+        class="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white"
+      >
+        <option value="">İl Seçiniz</option>
+        <template x-for="province in provinces" :key="province.id">
+          <option :value="province.slug" x-text="province.name"></option>
+        </template>
+      </select>
+      <p class="text-sm text-slate-500 mt-1" x-show="distributionCompany">
+        Dağıtım Şirketi: <span class="font-medium text-slate-700" x-text="distributionCompany"></span>
+      </p>
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-slate-700 mb-2">
+        Aylık Tüketim (kWh)
+        <span class="text-slate-400 font-normal ml-1" x-text="'(' + consumption + ' kWh)'"></span>
+      </label>
+      <input
+        type="range"
+        x-model.number="consumption"
+        @input="calculate()"
+        min="0"
+        max="2000"
+        step="10"
+        class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer"
+      />
+      <div class="flex items-center gap-3 mt-2">
+        <input
+          type="number"
+          x-model.number="consumption"
+          @input="calculate()"
+          min="0"
+          max="10000"
+          class="w-32 border border-slate-300 rounded-lg px-3 py-2 text-center focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+        />
+        <span class="text-sm text-slate-500">kWh</span>
+        <span class="text-xs text-slate-400 ml-auto">Ortalama mesken: 250 kWh/ay</span>
+      </div>
+
+      <div class="mt-3 bg-slate-50 rounded-lg p-3">
+        <div class="flex items-center justify-between text-xs text-slate-600 mb-1">
+          <span>Kademe 1: 0–150 kWh</span>
+          <span x-text="formatCurrency(getTierPrice(1))"></span>
+        </div>
+        <div class="w-full bg-slate-200 rounded-full h-2">
+          <div class="bg-green-500 h-2 rounded-full" :style="'width: ' + getTierPercent(1) + '%'"></div>
+        </div>
+
+        <div class="flex items-center justify-between text-xs text-slate-600 mb-1 mt-2">
+          <span>Kademe 2: 151–240 kWh</span>
+          <span x-text="formatCurrency(getTierPrice(2))"></span>
+        </div>
+        <div class="w-full bg-slate-200 rounded-full h-2">
+          <div class="bg-yellow-500 h-2 rounded-full" :style="'width: ' + getTierPercent(2) + '%'"></div>
+        </div>
+
+        <div class="flex items-center justify-between text-xs text-slate-600 mb-1 mt-2">
+          <span>Kademe 3: 240+ kWh</span>
+          <span x-text="formatCurrency(getTierPrice(3))"></span>
+        </div>
+        <div class="w-full bg-slate-200 rounded-full h-2">
+          <div class="bg-red-500 h-2 rounded-full" :style="'width: ' + getTierPercent(3) + '%'"></div>
+        </div>
+      </div>
+    </div>
+
+    <template x-if="meterType === 'cok-zamanli'">
+      <div class="space-y-4 bg-slate-50 rounded-lg p-4">
+        <h3 class="font-semibold text-slate-700">Çok Zamanlı Tüketim Dağılımı</h3>
+        <div>
+          <label class="block text-sm text-slate-600 mb-1">Gündüz (06:00–17:00) kWh</label>
+          <input
+            type="number"
+            x-model.number="peakConsumption"
+            @input="calculate()"
+            min="0"
+            class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-500"
+          />
+        </div>
+        <div>
+          <label class="block text-sm text-slate-600 mb-1">Puantiye (17:00–22:00) kWh</label>
+          <input
+            type="number"
+            x-model.number="pukConsumption"
+            @input="calculate()"
+            min="0"
+            class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-500"
+          />
+        </div>
+        <div>
+          <label class="block text-sm text-slate-600 mb-1">Gece (22:00–06:00) kWh</label>
+          <input
+            type="number"
+            x-model.number="offPeakConsumption"
+            @input="calculate()"
+            min="0"
+            class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-500"
+          />
+        </div>
+      </div>
+    </template>
+
+    <button
+      type="submit"
+      class="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-4 px-6 rounded-lg text-lg transition-colors shadow-lg shadow-primary-600/25"
+    >
+      Faturamı Hesapla
+    </button>
+  </form>
+
+  <template x-if="result">
+    <div class="mt-8 border-t border-slate-200 pt-6">
+      <div class="bg-primary-50 rounded-xl p-6 mb-6">
+        <p class="text-sm text-primary-700 mb-1">Toplam Fatura Tutarı</p>
+        <p class="text-4xl font-bold text-primary-800" x-text="formatCurrency(result.total)"></p>
+        <p class="text-sm text-primary-600 mt-2">
+          Efektif Birim Fiyat: <span class="font-semibold" x-text="formatCurrency(result.pricePerKwh)"></span>/kWh
+        </p>
+      </div>
+
+      <div class="space-y-2">
+        <template x-for="(item, index) in breakdownItems" :key="index">
+          <div class="flex justify-between items-center py-2 border-b border-slate-100">
+            <span class="text-slate-600" x-text="item.label"></span>
+            <span class="font-medium" x-text="formatCurrency(item.value)"></span>
+          </div>
+        </template>
+      </div>
+
+      <div class="flex gap-3 mt-6">
+        <button
+          @click="downloadPDF()"
+          class="flex-1 bg-slate-800 hover:bg-slate-900 text-white py-3 px-4 rounded-lg font-medium transition-colors text-sm"
+        >
+          PDF İndir
+        </button>
+        <button
+          @click="shareWhatsApp()"
+          class="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-medium transition-colors text-sm"
+        >
+          WhatsApp'ta Paylaş
+        </button>
+      </div>
+    </div>
+  </template>
+
+  <p class="text-xs text-slate-400 mt-6 text-center">
+    Son güncelleme: <span x-text="formatDate('" + lastUpdated + "')"></span> — Kaynak: EPDK
+  </p>
+</div>
+
+<script>
+  import { calculateElectricityBill } from '../utils/electricity.ts';
+
+  function electricityCalculator() {
+    return {
+      subscriberType: 'mesken',
+      meterType: 'tek-zamanli',
+      selectedProvince: '',
+      distributionCompany: '',
+      consumption: 250,
+      peakConsumption: 0,
+      pukConsumption: 0,
+      offPeakConsumption: 0,
+      result: null,
+      provinces: provinces,
+
+      updateDistributionCompany() {
+        const province = this.provinces.find((p) => p.slug === this.selectedProvince);
+        if (province) {
+          const dist = province.distributionCompany;
+          if (typeof dist === 'object') {
+            this.distributionCompany = dist.asian + ' / ' + dist.european;
+          } else {
+            this.distributionCompany = dist;
+          }
+        } else {
+          this.distributionCompany = '';
+        }
+      },
+
+      getTariff() {
+        const subTariff = tariffs[this.subscriberType];
+        if (this.meterType === 'cok-zamanli') {
+          return subTariff.cokZamanli;
+        }
+        return subTariff.tekZamanli;
+      },
+
+      getTierPrice(tier) {
+        const tariff = this.getTariff();
+        if (this.meterType === 'cok-zamanli') {
+          return tariff.gunduz.tiers[tier - 1]?.pricePerKwh ?? 0;
+        }
+        return tariff.tiers[tier - 1]?.pricePerKwh ?? 0;
+      },
+
+      getTierPercent(tier) {
+        if (this.consumption <= 0) return 0;
+        const tariff = this.getTariff();
+        const tiers = this.meterType === 'cok-zamanli' ? tariff.gunduz.tiers : tariff.tiers;
+        const t = tiers[tier - 1];
+        if (!t) return 0;
+        const max = t.max ?? this.consumption;
+        const range = max - t.min + 1;
+        return Math.min(100, (range / this.consumption) * 100);
+      },
+
+      calculate() {
+        if (this.consumption <= 0) {
+          this.result = null;
+          return;
+        }
+
+        const tariff = this.getTariff();
+        const input = {
+          consumption: this.consumption,
+          subscriberType: this.subscriberType,
+          meterType: this.meterType,
+          distributionCompany: this.distributionCompany,
+          peakConsumption: this.peakConsumption,
+          offPeakConsumption: this.offPeakConsumption,
+        };
+
+        this.result = calculateElectricityBill(input, tariff);
+      },
+
+      get breakdownItems() {
+        if (!this.result) return [];
+        const r = this.result;
+        const items = [
+          { label: 'Enerji Bedeli', value: r.energyCost },
+          { label: 'İletim Bedeli', value: r.transmissionCost },
+          { label: 'Dağıtım Bedeli', value: r.distributionCost },
+          { label: 'Güç Bedeli', value: r.powerCost },
+          { label: 'Sayaç Okuma Bedeli', value: r.measurementCost },
+          { label: 'Ara Toplam', value: r.subtotal },
+          { label: 'ETV (Tüketim Vergisi)', value: r.etv },
+          { label: 'TRT Payı (%2)', value: r.trtBand },
+          { label: 'Belediye Tüketim Vergisi (%5)', value: r.municipalTax },
+          { label: 'KDV (%20)', value: r.kdv },
+        ];
+        return items;
+      },
+
+      formatCurrency(value) {
+        return new Intl.NumberFormat('tr-TR', {
+          style: 'currency',
+          currency: 'TRY',
+        }).format(value);
+      },
+
+      formatDate(dateStr) {
+        const d = new Date(dateStr);
+        return d.toLocaleDateString('tr-TR');
+      },
+
+      downloadPDF() {
+        const text = `ELEKTRİK FATURA HESAPLAMASI\n\nToplam: ${this.formatCurrency(this.result.total)}\nTüketim: ${this.consumption} kWh\nBirim Fiyat: ${this.formatCurrency(this.result.pricePerKwh)}/kWh\n\nDetay:\nEnerji Bedeli: ${this.formatCurrency(this.result.energyCost)}\nİletim Bedeli: ${this.formatCurrency(this.result.transmissionCost)}\nDağıtım Bedeli: ${this.formatCurrency(this.result.distributionCost)}\nGüç Bedeli: ${this.formatCurrency(this.result.powerCost)}\nSayaç Okuma: ${this.formatCurrency(this.result.measurementCost)}\nETV: ${this.formatCurrency(this.result.etv)}\nTRT Payı: ${this.formatCurrency(this.result.trtBand)}\nBelediye Vergisi: ${this.formatCurrency(this.result.municipalTax)}\nKDV: ${this.formatCurrency(this.result.kdv)}`;
+
+        const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'elektrik-fatura-hesaplama.txt';
+        a.click();
+        URL.revokeObjectURL(url);
+      },
+
+      shareWhatsApp() {
+        const text = `Elektrik Fatura Hesaplamam:\nTüketim: ${this.consumption} kWh\nToplam: ${this.formatCurrency(this.result.total)}\nBirim Fiyat: ${this.formatCurrency(this.result.pricePerKwh)}/kWh\n\nHesapla: https://www.elektrikfatura.com/elektrik-fatura-hesaplama`;
+        window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
+      },
+    };
+  }
+</script>

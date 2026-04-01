@@ -1,0 +1,178 @@
+{
+  "lastUpdated": "2026-01-01",
+  "source": "Belediye Su Tarifeleri",
+  "currency": "TRY",
+  "tariffs": {
+    "istanbul": {
+      "authority": "İSKİ",
+      "water": {
+        "tiers": [
+          { "min": 0, "max": 10, "pricePerM3": 28.93 },
+          { "min": 11, "max": 30, "pricePerM3": 38.57 },
+          { "min": 31, "max": null, "pricePerM3": 57.86 }
+        ]
+      },
+      "wastewater": {
+        "rate": 0.88
+      },
+      "fixedCharges": {
+        "subscriptionFee": 15.30
+      },
+      "taxes": {
+        "kdvRate": 0.08
+      }
+    },
+    "ankara": {
+      "authority": "ASKİ",
+      "water": {
+        "tiers": [
+          { "min": 0, "max": 15, "pricePerM3": 22.14 },
+          { "min": 16, "max": 30, "pricePerM3": 33.21 },
+          { "min": 31, "max": null, "pricePerM3": 44.28 }
+        ]
+      },
+      "wastewater": {
+        "rate": 0.75
+      },
+      "fixedCharges": {
+        "subscriptionFee": 12.80
+      },
+      "taxes": {
+        "kdvRate": 0.08
+      }
+    },
+    "izmir": {
+      "authority": "İZSU",
+      "water": {
+        "tiers": [
+          { "min": 0, "max": 10, "pricePerM3": 24.70 },
+          { "min": 11, "max": 30, "pricePerM3": 37.05 },
+          { "min": 31, "max": null, "pricePerM3": 49.40 }
+        ]
+      },
+      "wastewater": {
+        "rate": 0.80
+      },
+      "fixedCharges": {
+        "subscriptionFee": 14.20
+      },
+      "taxes": {
+        "kdvRate": 0.08
+      }
+    },
+    "bursa": {
+      "authority": "BUSKİ",
+      "water": {
+        "tiers": [
+          { "min": 0, "max": 10, "pricePerM3": 26.45 },
+          { "min": 11, "max": 30, "pricePerM3": 35.80 },
+          { "min": 31, "max": null, "pricePerM3": 52.10 }
+        ]
+      },
+      "wastewater": {
+        "rate": 0.82
+      },
+      "fixedCharges": {
+        "subscriptionFee": 13.50
+      },
+      "taxes": {
+        "kdvRate": 0.08
+      }
+    },
+    "antalya": {
+      "authority": "ASAT",
+      "water": {
+        "tiers": [
+          { "min": 0, "max": 10, "pricePerM3": 25.80 },
+          { "min": 11, "max": 30, "pricePerM3": 36.20 },
+          { "min": 31, "max": null, "pricePerM3": 50.75 }
+        ]
+      },
+      "wastewater": {
+        "rate": 0.78
+      },
+      "fixedCharges": {
+        "subscriptionFee": 14.00
+      },
+      "taxes": {
+        "kdvRate": 0.08
+      }
+    },
+    "adana": {
+      "authority": "ASKİ",
+      "water": {
+        "tiers": [
+          { "min": 0, "max": 10, "pricePerM3": 23.60 },
+          { "min": 11, "max": 30, "pricePerM3": 34.15 },
+          { "min": 31, "max": null, "pricePerM3": 48.90 }
+        ]
+      },
+      "wastewater": {
+        "rate": 0.76
+      },
+      "fixedCharges": {
+        "subscriptionFee": 12.50
+      },
+      "taxes": {
+        "kdvRate": 0.08
+      }
+    },
+    "kocaeli": {
+      "authority": "İSU",
+      "water": {
+        "tiers": [
+          { "min": 0, "max": 10, "pricePerM3": 27.30 },
+          { "min": 11, "max": 30, "pricePerM3": 37.45 },
+          { "min": 31, "max": null, "pricePerM3": 54.20 }
+        ]
+      },
+      "wastewater": {
+        "rate": 0.85
+      },
+      "fixedCharges": {
+        "subscriptionFee": 14.80
+      },
+      "taxes": {
+        "kdvRate": 0.08
+      }
+    },
+    "gaziantep": {
+      "authority": "GASKİ",
+      "water": {
+        "tiers": [
+          { "min": 0, "max": 10, "pricePerM3": 22.80 },
+          { "min": 11, "max": 30, "pricePerM3": 32.90 },
+          { "min": 31, "max": null, "pricePerM3": 46.50 }
+        ]
+      },
+      "wastewater": {
+        "rate": 0.72
+      },
+      "fixedCharges": {
+        "subscriptionFee": 11.90
+      },
+      "taxes": {
+        "kdvRate": 0.08
+      }
+    },
+    "konya": {
+      "authority": "KOSKİ",
+      "water": {
+        "tiers": [
+          { "min": 0, "max": 10, "pricePerM3": 21.50 },
+          { "min": 11, "max": 30, "pricePerM3": 31.75 },
+          { "min": 31, "max": null, "pricePerM3": 44.80 }
+        ]
+      },
+      "wastewater": {
+        "rate": 0.70
+      },
+      "fixedCharges": {
+        "subscriptionFee": 11.20
+      },
+      "taxes": {
+        "kdvRate": 0.08
+      }
+    }
+  }
+}

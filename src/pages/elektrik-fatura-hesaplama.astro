@@ -1,0 +1,122 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import ElectricityCalculator from '@components/ElectricityCalculator.astro';
+import AdSenseUnit from '@components/AdSenseUnit.astro';
+import FAQ from '@components/FAQ.astro';
+import TariffTable from '@components/TariffTable.astro';
+import electricityData from '../../data/electricity-tariffs.json';
+
+const tariffs = electricityData.tariffs.mesken.tekZamanli;
+const lastUpdated = electricityData.lastUpdated;
+
+const title = 'Elektrik Faturası Hesaplama — Kademe Fiyatları ve Vergi Dahil';
+const description = 'EPDK güncel tarifeleriyle elektrik faturanızı hesaplayın. Kademe fiyatları, vergiler, dağıtım bedeli dahil tam fatura dökümü. 2026 güncel veriler.';
+
+const faqQuestions = [
+  {
+    question: 'Elektrik faturasında KDV oranı kaçtır?',
+    answer: 'Elektrik faturalarında KDV oranı %20 olarak uygulanmaktadır. KDV, enerji bedeli, dağıtım bedeli, iletim bedeli, sabit ücretler ve diğer vergilerin toplamı üzerinden hesaplanır.',
+  },
+  {
+    question: 'Mesken elektrik kademe sistemi nasıl işler?',
+    answer: 'Mesken aboneleri için 3 kademeli fiyatlandırma uygulanır: Kademe 1 (0-150 kWh): 3,0180 TL/kWh, Kademe 2 (151-240 kWh): 5,5330 TL/kWh, Kademe 3 (240+ kWh): 6,5390 TL/kWh. Her kademe, bir öncekinin üzerindeki tüketim için geçerlidir.',
+  },
+  {
+    question: 'Elektrik faturamı online nasıl hesaplarım?',
+    answer: 'Sitemizdeki elektrik faturası hesaplama aracını kullanarak; abone tipinizi, sayaç tipinizi, ilinizi ve aylık tüketiminizi girdiğinizde tüm vergiler dahil tam fatura tutarınızı anında görebilirsiniz.',
+  },
+  {
+    question: 'Tek zamanlı ve çok zamanlı sayaç farkı nedir?',
+    answer: 'Tek zamanlı sayaçta tüm gün boyunca aynı tarife uygulanır. Çok zamanlı (puant) sayaçta ise gündüz (06:00-17:00), puantiye (17:00-22:00) ve gece (22:00-06:00) olmak üzere üç farklı tarife uygulanır. Gece tüketimi daha ucuzdur.',
+  },
+  {
+    question: 'Elektrik dağıtım bedeli nedir, neden ödüyorum?',
+    answer: 'Dağıtım bedeli, elektriğin iletim hatlarından evinize ulaşmasını sağlayan altyapının bakım ve işletim maliyetidir. 2026 yılında mesken aboneleri için aylık 103,36 TL olarak belirlenmiştir.',
+  },
+  {
+    question: 'ETV (Elektrik Tüketim Vergisi) nedir?',
+    answer: 'ETV, elektrik tüketimi üzerinden alınan bir vergidir. Mesken aboneleri için 0,10 TL/kWh olarak uygulanır. Bu vergi, fatura tutarına tüketim miktarıyla orantılı olarak eklenir.',
+  },
+  {
+    question: 'Hangi ilde elektrik daha ucuz?',
+    answer: 'Elektrik birim fiyatları tüm Türkiye genelinde EPDK tarafından belirlenen tarifelere göre aynıdır. Ancak dağıtım şirketleri arasında küçük farklılıklar olabilir. İl sayfamızdan bölgenize özel detayları inceleyebilirsiniz.',
+  },
+  {
+    question: 'EPDK tarifeleri ne zaman güncellenir?',
+    answer: 'EPDK tarifeleri genellikle yılda birkaç kez güncellenir. Son değişiklik {lastUpdated} tarihinde yapılmıştır. Güncel tarifeleri takip etmek için sitemizi ziyaret edebilirsiniz.',
+  },
+];
+
+const schemaMarkup = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': ['WebApplication', 'FAQPage'],
+  name: 'Elektrik Faturası Hesaplama',
+  url: 'https://www.elektrikfatura.com/elektrik-fatura-hesaplama',
+  applicationCategory: 'UtilityApplication',
+  operatingSystem: 'Any',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'TRY',
+  },
+  mainEntity: faqQuestions.map((q) => ({
+    '@type': 'Question',
+    name: q.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: q.answer,
+    },
+  })),
+});
+---
+
+<BaseLayout title={title} description={description} schemaMarkup={schemaMarkup}>
+  <div class="bg-primary-600 text-white py-8">
+    <div class="max-w-6xl mx-auto px-4">
+      <h1 class="text-2xl md:text-3xl font-bold">Elektrik Faturası Hesaplama</h1>
+      <p class="text-primary-100 mt-2">EPDK güncel tarifeleriyle kademe fiyatları, vergiler ve tüm kalemler dahil tam fatura dökümü</p>
+    </div>
+  </div>
+
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+      <div class="lg:col-span-3">
+        <ElectricityCalculator />
+      </div>
+      <div class="lg:col-span-2">
+        <div class="sticky top-4 space-y-6">
+          <AdSenseUnit format="rectangle" />
+
+          <TariffTable
+            title="Mesken Tek Zamanlı Tarife (2026)"
+            tiers={[
+              { label: 'Kademe 1', price: '3,0180 TL/kWh', range: '0–150 kWh' },
+              { label: 'Kademe 2', price: '5,5330 TL/kWh', range: '151–240 kWh' },
+              { label: 'Kademe 3', price: '6,5390 TL/kWh', range: '240+ kWh' },
+            ]}
+            fixedCharges={[
+              { label: 'Dağıtım Bedeli', value: '103,36 TL/ay' },
+              { label: 'Sayaç Okuma Bedeli', value: '19,34 TL/ay' },
+              { label: 'İletim Bedeli', value: '0,2450 TL/kWh' },
+              { label: 'Dağıtım Sistemi Kullanım', value: '0,5823 TL/kWh' },
+            ]}
+            taxes={[
+              { label: 'ETV', value: '0,10 TL/kWh' },
+              { label: 'TRT Payı', value: '%2' },
+              { label: 'Belediye Tüketim Vergisi', value: '%5' },
+              { label: 'KDV', value: '%20' },
+            ]}
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-12">
+      <AdSenseUnit format="leaderboard" />
+    </div>
+
+    <div class="mt-12">
+      <FAQ questions={faqQuestions} />
+    </div>
+  </div>
+</BaseLayout>

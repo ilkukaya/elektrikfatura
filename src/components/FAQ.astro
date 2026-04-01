@@ -1,0 +1,33 @@
+---
+interface Props {
+  questions: Array<{ question: string; answer: string }>;
+}
+
+const { questions } = Astro.props;
+---
+
+<div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+  <div class="p-4 bg-slate-50 border-b border-slate-200">
+    <h3 class="font-semibold text-slate-800">Sıkça Sorulan Sorular</h3>
+  </div>
+  <div class="divide-y divide-slate-100">
+    {questions.map((item, index) => (
+      <details class="group" x-data="{ open: false }">
+        <summary class="flex justify-between items-center cursor-pointer px-4 py-4 hover:bg-slate-50 transition-colors list-none">
+          <span class="font-medium text-slate-800 pr-4">{item.question}</span>
+          <svg
+            class="w-5 h-5 text-slate-400 flex-shrink-0 transition-transform group-open:rotate-180"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </summary>
+        <div class="px-4 pb-4 text-slate-600 leading-relaxed">
+          {item.answer}
+        </div>
+      </details>
+    ))}
+  </div>
+</div>

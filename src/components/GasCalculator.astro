@@ -1,0 +1,220 @@
+---
+import gasData from '../../data/gas-tariffs.json';
+import { formatCurrency } from '@utils/formatters';
+
+const tariffs = gasData.tariffs;
+const lastUpdated = gasData.lastUpdated;
+---
+
+<div
+  x-data="gasCalculator()"
+  class="bg-white rounded-xl shadow-sm border border-slate-200 p-6"
+>
+  <h2 class="text-xl font-bold text-slate-800 mb-6">Doğalgaz Faturası Hesapla</h2>
+
+  <form class="space-y-6" @submit.prevent="calculate">
+    <div>
+      <label class="block text-sm font-medium text-slate-700 mb-2">Abone Tipi</label>
+      <div class="grid grid-cols-3 gap-3">
+        <template x-for="type in ['mesken', 'ticarethane', 'sanayi']" :key="type">
+          <button
+            type="button"
+            @click="subscriberType = type"
+            :class="subscriberType === type ? 'bg-primary-600 text-white border-primary-600' : 'bg-white text-slate-700 border-slate-300 hover:border-primary-400'"
+            class="border-2 rounded-lg py-3 px-4 text-center font-medium transition-all"
+            x-text="type === 'mesken' ? 'Mesken' : type === 'ticarethane' ? 'Ticarethane' : 'Sanayi'"
+          ></button>
+        </template>
+      </div>
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-slate-700 mb-2">
+        Aylık Tüketim (sm³)
+        <span class="text-slate-400 font-normal ml-1" x-text="'(' + consumption + ' sm³)'"></span>
+      </label>
+      <input
+        type="range"
+        x-model.number="consumption"
+        @input="calculate()"
+        min="0"
+        max="2000"
+        step="10"
+        class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer"
+      />
+      <div class="flex items-center gap-3 mt-2">
+        <input
+          type="number"
+          x-model.number="consumption"
+          @input="calculate()"
+          min="0"
+          max="10000"
+          class="w-32 border border-slate-300 rounded-lg px-3 py-2 text-center focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+        />
+        <span class="text-sm text-slate-500">sm³</span>
+        <span class="text-xs text-slate-400 ml-auto">Ortalama mesken: 300 sm³/ay</span>
+      </div>
+
+      <div class="mt-3 bg-slate-50 rounded-lg p-3">
+        <div class="flex items-center justify-between text-xs text-slate-600 mb-1">
+          <span>Kademe 1: 0–300 sm³</span>
+          <span x-text="formatCurrency(getTierPrice(1))"></span>
+        </div>
+        <div class="w-full bg-slate-200 rounded-full h-2">
+          <div class="bg-green-500 h-2 rounded-full" :style="'width: ' + getTierPercent(1) + '%'"></div>
+        </div>
+
+        <div class="flex items-center justify-between text-xs text-slate-600 mb-1 mt-2">
+          <span>Kademe 2: 301–500 sm³</span>
+          <span x-text="formatCurrency(getTierPrice(2))"></span>
+        </div>
+        <div class="w-full bg-slate-200 rounded-full h-2">
+          <div class="bg-yellow-500 h-2 rounded-full" :style="'width: ' + getTierPercent(2) + '%'"></div>
+        </div>
+
+        <div class="flex items-center justify-between text-xs text-slate-600 mb-1 mt-2">
+          <span>Kademe 3: 500+ sm³</span>
+          <span x-text="formatCurrency(getTierPrice(3))"></span>
+        </div>
+        <div class="w-full bg-slate-200 rounded-full h-2">
+          <div class="bg-red-500 h-2 rounded-full" :style="'width: ' + getTierPercent(3) + '%'"></div>
+        </div>
+      </div>
+    </div>
+
+    <button
+      type="submit"
+      class="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-4 px-6 rounded-lg text-lg transition-colors shadow-lg shadow-primary-600/25"
+    >
+      Faturamı Hesapla
+    </button>
+  </form>
+
+  <template x-if="result">
+    <div class="mt-8 border-t border-slate-200 pt-6">
+      <div class="bg-primary-50 rounded-xl p-6 mb-6">
+        <p class="text-sm text-primary-700 mb-1">Toplam Fatura Tutarı</p>
+        <p class="text-4xl font-bold text-primary-800" x-text="formatCurrency(result.total)"></p>
+        <p class="text-sm text-primary-600 mt-2">
+          Efektif Birim Fiyat: <span class="font-semibold" x-text="formatCurrency(result.pricePerSm3)"></span>/sm³
+        </p>
+      </div>
+
+      <div class="space-y-2">
+        <template x-for="(item, index) in breakdownItems" :key="index">
+          <div class="flex justify-between items-center py-2 border-b border-slate-100">
+            <span class="text-slate-600" x-text="item.label"></span>
+            <span class="font-medium" x-text="formatCurrency(item.value)"></span>
+          </div>
+        </template>
+      </div>
+
+      <div class="flex gap-3 mt-6">
+        <button
+          @click="downloadPDF()"
+          class="flex-1 bg-slate-800 hover:bg-slate-900 text-white py-3 px-4 rounded-lg font-medium transition-colors text-sm"
+        >
+          PDF İndir
+        </button>
+        <button
+          @click="shareWhatsApp()"
+          class="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-medium transition-colors text-sm"
+        >
+          WhatsApp'ta Paylaş
+        </button>
+      </div>
+    </div>
+  </template>
+
+  <p class="text-xs text-slate-400 mt-6 text-center">
+    Son güncelleme: <span x-text="formatDate('" + lastUpdated + "')"></span> — Kaynak: EPDK / BOTAŞ
+  </p>
+</div>
+
+<script>
+  import { calculateGasBill } from '../utils/gas.ts';
+
+  function gasCalculator() {
+    return {
+      subscriberType: 'mesken',
+      consumption: 300,
+      result: null,
+
+      getTariff() {
+        return tariffs[this.subscriberType];
+      },
+
+      getTierPrice(tier) {
+        const tariff = this.getTariff();
+        return tariff.tiers[tier - 1]?.pricePerSm3 ?? 0;
+      },
+
+      getTierPercent(tier) {
+        if (this.consumption <= 0) return 0;
+        const tariff = this.getTariff();
+        const t = tariff.tiers[tier - 1];
+        if (!t) return 0;
+        const max = t.max ?? this.consumption;
+        const range = max - t.min + 1;
+        return Math.min(100, (range / this.consumption) * 100);
+      },
+
+      calculate() {
+        if (this.consumption <= 0) {
+          this.result = null;
+          return;
+        }
+
+        const tariff = this.getTariff();
+        const input = {
+          consumption: this.consumption,
+          subscriberType: this.subscriberType,
+          distributionCompany: '',
+        };
+
+        this.result = calculateGasBill(input, tariff);
+      },
+
+      get breakdownItems() {
+        if (!this.result) return [];
+        const r = this.result;
+        return [
+          { label: 'Doğalgaz Bedeli', value: r.gasCost },
+          { label: 'Dağıtım Bedeli', value: r.distributionFee },
+          { label: 'Sayaç Okuma Bedeli', value: r.meterReadingFee },
+          { label: 'Ara Toplam', value: r.subtotal },
+          { label: 'KDV (%20)', value: r.kdv },
+        ];
+      },
+
+      formatCurrency(value) {
+        return new Intl.NumberFormat('tr-TR', {
+          style: 'currency',
+          currency: 'TRY',
+        }).format(value);
+      },
+
+      formatDate(dateStr) {
+        const d = new Date(dateStr);
+        return d.toLocaleDateString('tr-TR');
+      },
+
+      downloadPDF() {
+        const text = `DOĞALGAZ FATURA HESAPLAMASI\n\nToplam: ${this.formatCurrency(this.result.total)}\nTüketim: ${this.consumption} sm³\nBirim Fiyat: ${this.formatCurrency(this.result.pricePerSm3)}/sm³\n\nDetay:\nDoğalgaz Bedeli: ${this.formatCurrency(this.result.gasCost)}\nDağıtım Bedeli: ${this.formatCurrency(this.result.distributionFee)}\nSayaç Okuma: ${this.formatCurrency(this.result.meterReadingFee)}\nKDV: ${this.formatCurrency(this.result.kdv)}`;
+
+        const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'dogalgaz-fatura-hesaplama.txt';
+        a.click();
+        URL.revokeObjectURL(url);
+      },
+
+      shareWhatsApp() {
+        const text = `Doğalgaz Fatura Hesaplamam:\nTüketim: ${this.consumption} sm³\nToplam: ${this.formatCurrency(this.result.total)}\nBirim Fiyat: ${this.formatCurrency(this.result.pricePerSm3)}/sm³\n\nHesapla: https://www.elektrikfatura.com/dogalgaz-fatura-hesaplama`;
+        window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
+      },
+    };
+  }
+</script>

@@ -1,0 +1,29 @@
+---
+interface Props {
+  items: Array<{ label: string; href: string }>;
+}
+
+const { items } = Astro.props;
+---
+
+<nav aria-label="Breadcrumb" class="text-sm mb-4">
+  <ol class="flex flex-wrap items-center gap-1 text-slate-500">
+    <li>
+      <a href="/" class="hover:text-primary-600 transition-colors">Ana Sayfa</a>
+    </li>
+    {items.map((item, index) => (
+      <Fragment>
+        <li class="flex items-center gap-1">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+          </svg>
+          {index === items.length - 1 ? (
+            <span class="text-slate-800 font-medium">{item.label}</span>
+          ) : (
+            <a href={item.href} class="hover:text-primary-600 transition-colors">{item.label}</a>
+          )}
+        </li>
+      </Fragment>
+    ))}
+  </ol>
+</nav>

@@ -1,0 +1,226 @@
+---
+import waterData from '../../data/water-tariffs.json';
+import { formatCurrency } from '@utils/formatters';
+
+const tariffs = waterData.tariffs;
+const lastUpdated = waterData.lastUpdated;
+
+const cityOptions = Object.entries(tariffs).map(([key, value]) => ({
+  key,
+  name: value.authority,
+}));
+---
+
+<div
+  x-data="waterCalculator()"
+  class="bg-white rounded-xl shadow-sm border border-slate-200 p-6"
+>
+  <h2 class="text-xl font-bold text-slate-800 mb-6">Su Faturası Hesapla</h2>
+
+  <form class="space-y-6" @submit.prevent="calculate">
+    <div>
+      <label class="block text-sm font-medium text-slate-700 mb-2">Şehir</label>
+      <select
+        x-model="selectedCity"
+        @change="calculate()"
+        class="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white"
+      >
+        <option value="">Şehir Seçiniz</option>
+        <template x-for="city in cities" :key="city.key">
+          <option :value="city.key" x-text="city.name"></option>
+        </template>
+      </select>
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-slate-700 mb-2">
+        Aylık Tüketim (m³)
+        <span class="text-slate-400 font-normal ml-1" x-text="'(' + consumption + ' m³)'"></span>
+      </label>
+      <input
+        type="range"
+        x-model.number="consumption"
+        @input="calculate()"
+        min="0"
+        max="100"
+        step="1"
+        class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer"
+      />
+      <div class="flex items-center gap-3 mt-2">
+        <input
+          type="number"
+          x-model.number="consumption"
+          @input="calculate()"
+          min="0"
+          max="500"
+          class="w-32 border border-slate-300 rounded-lg px-3 py-2 text-center focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+        />
+        <span class="text-sm text-slate-500">m³</span>
+        <span class="text-xs text-slate-400 ml-auto">Ortalama aile: 15 m³/ay</span>
+      </div>
+
+      <template x-if="selectedCity && currentTariff">
+        <div class="mt-3 bg-slate-50 rounded-lg p-3">
+          <template x-for="(tier, index) in currentTariff.water.tiers" :key="index">
+            <div>
+              <div class="flex items-center justify-between text-xs text-slate-600 mb-1" x-show="index > 0" class="mt-2">
+              </div>
+              <div class="flex items-center justify-between text-xs text-slate-600 mb-1">
+                <span>
+                  <span x-text="'Kademe ' + (index + 1) + ': ' + tier.min + '–' + (tier.max ?? '+') + ' m³'"></span>
+                </span>
+                <span x-text="formatCurrency(tier.pricePerM3)"></span>
+              </div>
+              <div class="w-full bg-slate-200 rounded-full h-2">
+                <div
+                  :class="index === 0 ? 'bg-green-500' : index === 1 ? 'bg-yellow-500' : 'bg-red-500'"
+                  class="h-2 rounded-full"
+                  :style="'width: ' + getTierPercent(index) + '%'"
+                ></div>
+              </div>
+            </div>
+          </template>
+          <p class="text-xs text-slate-500 mt-2">
+            Atıksu: <span class="font-medium" x-text="(currentTariff.wastewater.rate * 100) + '%'"></span>
+            — KDV: <span class="font-medium" x-text="(currentTariff.taxes.kdvRate * 100) + '%'"></span>
+          </p>
+        </div>
+      </template>
+    </div>
+
+    <button
+      type="submit"
+      class="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-4 px-6 rounded-lg text-lg transition-colors shadow-lg shadow-primary-600/25"
+    >
+      Faturamı Hesapla
+    </button>
+  </form>
+
+  <template x-if="result">
+    <div class="mt-8 border-t border-slate-200 pt-6">
+      <div class="bg-primary-50 rounded-xl p-6 mb-6">
+        <p class="text-sm text-primary-700 mb-1">Toplam Fatura Tutarı</p>
+        <p class="text-4xl font-bold text-primary-800" x-text="formatCurrency(result.total)"></p>
+        <p class="text-sm text-primary-600 mt-2">
+          Efektif Birim Fiyat: <span class="font-semibold" x-text="formatCurrency(result.pricePerM3)"></span>/m³
+        </p>
+      </div>
+
+      <div class="space-y-2">
+        <template x-for="(item, index) in breakdownItems" :key="index">
+          <div class="flex justify-between items-center py-2 border-b border-slate-100">
+            <span class="text-slate-600" x-text="item.label"></span>
+            <span class="font-medium" x-text="formatCurrency(item.value)"></span>
+          </div>
+        </template>
+      </div>
+
+      <div class="flex gap-3 mt-6">
+        <button
+          @click="downloadPDF()"
+          class="flex-1 bg-slate-800 hover:bg-slate-900 text-white py-3 px-4 rounded-lg font-medium transition-colors text-sm"
+        >
+          PDF İndir
+        </button>
+        <button
+          @click="shareWhatsApp()"
+          class="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-medium transition-colors text-sm"
+        >
+          WhatsApp'ta Paylaş
+        </button>
+      </div>
+    </div>
+  </template>
+
+  <p class="text-xs text-slate-400 mt-6 text-center">
+    Son güncelleme: <span x-text="formatDate('" + lastUpdated + "')"></span>
+  </p>
+</div>
+
+<script>
+  import { calculateWaterBill } from '../utils/water.ts';
+
+  const tariffData = tariffs;
+
+  function waterCalculator() {
+    return {
+      selectedCity: '',
+      consumption: 15,
+      result: null,
+      cities: cityOptions,
+
+      get currentTariff() {
+        if (!this.selectedCity) return null;
+        return tariffData[this.selectedCity] || null;
+      },
+
+      getTierPercent(index) {
+        if (!this.currentTariff || this.consumption <= 0) return 0;
+        const tiers = this.currentTariff.water.tiers;
+        const t = tiers[index];
+        if (!t) return 0;
+        const max = t.max ?? this.consumption;
+        const range = max - t.min + 1;
+        return Math.min(100, (range / this.consumption) * 100);
+      },
+
+      calculate() {
+        if (!this.selectedCity || this.consumption <= 0) {
+          this.result = null;
+          return;
+        }
+
+        const tariff = this.currentTariff;
+        if (!tariff) return;
+
+        const input = {
+          consumption: this.consumption,
+          city: this.selectedCity,
+        };
+
+        this.result = calculateWaterBill(input, tariff);
+      },
+
+      get breakdownItems() {
+        if (!this.result) return [];
+        const r = this.result;
+        return [
+          { label: 'Su Bedeli', value: r.waterCost },
+          { label: 'Atıksu Bedeli', value: r.wastewaterCost },
+          { label: 'Abonelik Bedeli', value: r.subscriptionFee },
+          { label: 'Ara Toplam', value: r.subtotal },
+          { label: 'KDV (%8)', value: r.kdv },
+        ];
+      },
+
+      formatCurrency(value) {
+        return new Intl.NumberFormat('tr-TR', {
+          style: 'currency',
+          currency: 'TRY',
+        }).format(value);
+      },
+
+      formatDate(dateStr) {
+        const d = new Date(dateStr);
+        return d.toLocaleDateString('tr-TR');
+      },
+
+      downloadPDF() {
+        const text = `SU FATURA HESAPLAMASI\n\nToplam: ${this.formatCurrency(this.result.total)}\nTüketim: ${this.consumption} m³\nBirim Fiyat: ${this.formatCurrency(this.result.pricePerM3)}/m³\n\nDetay:\nSu Bedeli: ${this.formatCurrency(this.result.waterCost)}\nAtıksu Bedeli: ${this.formatCurrency(this.result.wastewaterCost)}\nAbonelik: ${this.formatCurrency(this.result.subscriptionFee)}\nKDV: ${this.formatCurrency(this.result.kdv)}`;
+
+        const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'su-fatura-hesaplama.txt';
+        a.click();
+        URL.revokeObjectURL(url);
+      },
+
+      shareWhatsApp() {
+        const text = `Su Fatura Hesaplamam:\nTüketim: ${this.consumption} m³\nToplam: ${this.formatCurrency(this.result.total)}\nBirim Fiyat: ${this.formatCurrency(this.result.pricePerM3)}/m³\n\nHesapla: https://www.elektrikfatura.com/su-fatura-hesaplama`;
+        window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
+      },
+    };
+  }
+</script>

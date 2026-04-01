@@ -1,0 +1,163 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import AdSenseUnit from '@components/AdSenseUnit.astro';
+import LastUpdated from '@components/LastUpdated.astro';
+import electricityData from '../../data/electricity-tariffs.json';
+import provincesData from '../../data/provinces.json';
+
+const lastUpdated = electricityData.lastUpdated;
+const provinces = provincesData.provinces;
+
+const title = 'Elektrik Fatura Hesaplama 2026 | EPDK Güncel Tarifesi | elektrikfatura.com';
+const description = 'EPDK güncel tarifeleriyle elektrik, doğalgaz ve su faturanızı saniyeler içinde hesaplayın. 81 il için dağıtım şirketi bilgisi, kademe fiyatları ve vergi dahil tam fatura dökümü.';
+
+const schemaMarkup = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'elektrikfatura.com',
+  url: 'https://www.elektrikfatura.com',
+  description: 'Türkiye genelinde elektrik, doğalgaz ve su faturası hesaplama platformu',
+  sameAs: [],
+});
+---
+
+<BaseLayout title={title} description={description} schemaMarkup={schemaMarkup}>
+  <section class="bg-gradient-to-br from-primary-600 to-primary-800 text-white py-16 md:py-24">
+    <div class="max-w-6xl mx-auto px-4 text-center">
+      <h1 class="text-3xl md:text-5xl font-bold mb-4 leading-tight">
+        Elektrik, Doğalgaz ve Su Faturanı Hesapla
+      </h1>
+      <p class="text-lg md:text-xl text-primary-100 mb-8 max-w-2xl mx-auto">
+        EPDK güncel tarifeleriyle saniyeler içinde tam fatura dökümü
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-3xl mx-auto">
+        <a href="/elektrik-fatura-hesaplama" class="bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-xl p-6 text-center transition-all border border-white/20">
+          <svg class="w-10 h-10 mx-auto mb-3 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+          <h3 class="font-bold text-lg">Elektrik</h3>
+          <p class="text-sm text-primary-200 mt-1">Kademe fiyatları + vergiler</p>
+        </a>
+        <a href="/dogalgaz-fatura-hesaplama" class="bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-xl p-6 text-center transition-all border border-white/20">
+          <svg class="w-10 h-10 mx-auto mb-3 text-orange-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
+          </svg>
+          <h3 class="font-bold text-lg">Doğalgaz</h3>
+          <p class="text-sm text-primary-200 mt-1">BOTAŞ tarifesi + KDV</p>
+        </a>
+        <a href="/su-fatura-hesaplama" class="bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-xl p-6 text-center transition-all border border-white/20">
+          <svg class="w-10 h-10 mx-auto mb-3 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+          </svg>
+          <h3 class="font-bold text-lg">Su</h3>
+          <p class="text-sm text-primary-200 mt-1">Büyükşehir tarifeleri</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <AdSenseUnit format="leaderboard" />
+
+  <section class="py-12 bg-white">
+    <div class="max-w-6xl mx-auto px-4">
+      <h2 class="text-2xl font-bold text-slate-800 mb-8 text-center">Neden elektrikfatura.com?</h2>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="text-center p-6">
+          <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h3 class="font-semibold text-slate-800 mb-2">EPDK Güncel Veri</h3>
+          <p class="text-sm text-slate-600">Tüm tarifeler EPDK resmi kaynaklarından alınır ve düzenli güncellenir.</p>
+        </div>
+        <div class="text-center p-6">
+          <div class="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h3 class="font-semibold text-slate-800 mb-2">Vergi Dahil Hesaplama</h3>
+          <p class="text-sm text-slate-600">KDV, ETV, TRT payı, belediye vergisi dahil tam fatura tutarını görün.</p>
+        </div>
+        <div class="text-center p-6">
+          <div class="w-12 h-12 bg-secondary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-6 h-6 text-secondary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          </div>
+          <h3 class="font-semibold text-slate-800 mb-2">81 İl Kapsamı</h3>
+          <p class="text-sm text-slate-600">Türkiye'nin tüm illeri için dağıtım şirketi ve tarife bilgisi.</p>
+        </div>
+        <div class="text-center p-6">
+          <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+          <h3 class="font-semibold text-slate-800 mb-2">Anlık Hesaplama</h3>
+          <p class="text-sm text-slate-600">Tüketim değerini girin, faturanız anında hesaplansın.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-8 bg-secondary-50 border-y border-secondary-200">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="flex items-center gap-3">
+        <svg class="w-6 h-6 text-secondary-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <div>
+          <p class="font-semibold text-secondary-800">Son Tarife Güncellemesi</p>
+          <p class="text-sm text-secondary-700">Tüm tarifeler {new Date(lastUpdated).toLocaleDateString('tr-TR')} tarihinde güncellenmiştir. Bir sonraki güncelleme EPDK kararı ile yapılacaktır.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-12 bg-white">
+    <div class="max-w-6xl mx-auto px-4">
+      <h2 class="text-2xl font-bold text-slate-800 mb-6">İllere Göre Elektrik Faturası Hesaplama</h2>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+        {provinces.map((province) => (
+          <a
+            href={`/iller/${province.slug}`}
+            class="block bg-slate-50 hover:bg-primary-50 hover:text-primary-700 rounded-lg px-4 py-3 text-center transition-colors border border-slate-200 hover:border-primary-200"
+          >
+            <span class="text-sm font-medium">{province.name}</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="py-12 bg-slate-50">
+    <div class="max-w-6xl mx-auto px-4">
+      <h2 class="text-2xl font-bold text-slate-800 mb-6">Elektrik Faturası Hesaplama Nasıl Çalışır?</h2>
+      <div class="prose prose-slate max-w-none text-slate-600">
+        <p class="mb-4">
+          Türkiye'de elektrik faturaları EPDK (Enerji Piyasası Düzenleme Kurumu) tarafından belirlenen tarifeler üzerinden hesaplanır.
+          2026 yılında mesken aboneleri için kademeli fiyatlandırma sistemi uygulanmaktadır. Bu sistemde tüketim miktarına göre
+          farklı birim fiyatlar geçerlidir.
+        </p>
+        <p class="mb-4">
+          Kademe 1 kapsamında 0-150 kWh arası tüketim için birim fiyat 3,0180 TL/kWh olarak belirlenmiştir. 151-240 kWh arası
+          tüketim Kademe 2'ye girer ve birim fiyat 5,5330 TL/kWh'dir. 240 kWh üzeri tüketim ise Kademe 3'te değerlendirilir ve
+          birim fiyat 6,5390 TL/kWh olarak uygulanır.
+        </p>
+        <p class="mb-4">
+          Fatura tutarı sadece enerji bedelinden ibaret değildir. Dağıtım bedeli, iletim sistemi kullanım bedeli, sayaç okuma bedeli,
+          güç bedeli gibi sabit ve değişken kalemler ile ETV (Elektrik Tüketim Vergisi), TRT payı, belediye tüketim vergisi ve KDV
+          gibi vergiler de faturaya eklenir. Bu nedenle tükettiğiniz kWh başına ödediğiniz efektif birim fiyat, tarife birim
+          fiyatından önemli ölçüde yüksektir.
+        </p>
+        <p>
+          elektrikfatura.com olarak tüm bu kalemleri otomatik olarak hesaplıyor, size tam fatura dökümünü sunuyoruz. 81 ilin
+          tamamı için doğru dağıtım şirketi bilgisi ile hesaplama yapabilir, ilinize özel tarife detaylarını inceleyebilirsiniz.
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

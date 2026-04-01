@@ -1,0 +1,25 @@
+{
+  "name": "elektrikfatura",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Elektrik, Doğalgaz ve Su Fatura Hesaplama Platformu — EPDK Güncel Tarifeleri",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "validate": "python scripts/validate-tariffs.py"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.1.6",
+    "@astrojs/tailwind": "^5.1.0",
+    "alpinejs": "^3.14.1",
+    "astro": "^4.15.4",
+    "tailwindcss": "^3.4.10"
+  },
+  "devDependencies": {
+    "@types/alpinejs": "^3.13.10",
+    "typescript": "^5.5.4"
+  }
+}

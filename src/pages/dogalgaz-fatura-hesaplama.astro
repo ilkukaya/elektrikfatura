@@ -1,0 +1,118 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import GasCalculator from '@components/GasCalculator.astro';
+import AdSenseUnit from '@components/AdSenseUnit.astro';
+import FAQ from '@components/FAQ.astro';
+import TariffTable from '@components/TariffTable.astro';
+import gasData from '../../data/gas-tariffs.json';
+
+const tariffs = gasData.tariffs.mesken;
+const lastUpdated = gasData.lastUpdated;
+
+const title = 'Doğalgaz Faturası Hesaplama — BOTAŞ Güncel Tarifesi 2026';
+const description = 'BOTAŞ ve EPDK güncel doğalgaz tarifeleriyle faturanızı hesaplayın. Kademe fiyatları, KDV dahil tam fatura dökümü.';
+
+const faqQuestions = [
+  {
+    question: 'Doğalgaz faturasında KDV oranı kaçtır?',
+    answer: 'Doğalgaz faturalarında KDV oranı %20 olarak uygulanmaktadır. KDV, doğalgaz bedeli ve dağıtım bedeli toplamı üzerinden hesaplanır.',
+  },
+  {
+    question: 'Doğalgaz kademe sistemi nasıl işler?',
+    answer: 'Mesken aboneleri için 3 kademeli fiyatlandırma uygulanır: Kademe 1 (0-300 sm³): 16,8847 TL/sm³, Kademe 2 (301-500 sm³): 19,2451 TL/sm³, Kademe 3 (500+ sm³): 22,1095 TL/sm³.',
+  },
+  {
+    question: 'Doğalgaz faturasında ÖTV var mı?',
+    answer: 'Mesken doğalgaz tüketiminde ÖTV uygulanmamaktadır. Sadece KDV (%20) faturaya eklenir.',
+  },
+  {
+    question: 'Doğalgaz dağıtım bedeli nedir?',
+    answer: 'Dağıtım bedeli, doğalgazın iletim hatlarından evinize ulaşmasını sağlayan altyapının bakım ve işletim maliyetidir. Bölgeye göre 45-90 TL/ay arasında değişir.',
+  },
+  {
+    question: 'sm³ ile m³ arasındaki fark nedir?',
+    answer: 'Doğalgaz tüketimi standart metreküp (sm³) cinsinden ölçülür. 1 sm³, 15°C ve 1 atmosfer basınçtaki 1 metreküp gaz miktarıdır. Su tüketimindeki m³ ile karıştırılmamalıdır.',
+  },
+  {
+    question: 'Doğalgaz faturamı nasıl düşürebilirim?',
+    answer: 'Kombi bakımını düzenli yaptırın, evinizi iyi yalıtın, oda termostatı kullanın, gereksiz oda ısıtmayın ve pencere kenarlarını izole edin. Bu önlemlerle %20-30 tasarruf sağlayabilirsiniz.',
+  },
+  {
+    question: 'Doğalgaz tarifeleri ne zaman güncellenir?',
+    answer: 'Doğalgaz tarifeleri EPDK ve BOTAŞ tarafından düzenli olarak güncellenir. Son güncelleme {lastUpdated} tarihinde yapılmıştır.',
+  },
+  {
+    question: 'Ticarethane doğalgaz tarifesi meskenden farklı mı?',
+    answer: 'Evet, ticarethane aboneleri için farklı kademe eşikleri ve birim fiyatlar uygulanır. Ticarethane tarifeleri genellikle daha yüksek birim fiyatlara sahiptir.',
+  },
+];
+
+const schemaMarkup = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': ['WebApplication', 'FAQPage'],
+  name: 'Doğalgaz Faturası Hesaplama',
+  url: 'https://www.elektrikfatura.com/dogalgaz-fatura-hesaplama',
+  applicationCategory: 'UtilityApplication',
+  operatingSystem: 'Any',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'TRY',
+  },
+  mainEntity: faqQuestions.map((q) => ({
+    '@type': 'Question',
+    name: q.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: q.answer,
+    },
+  })),
+});
+---
+
+<BaseLayout title={title} description={description} schemaMarkup={schemaMarkup}>
+  <div class="bg-primary-600 text-white py-8">
+    <div class="max-w-6xl mx-auto px-4">
+      <h1 class="text-2xl md:text-3xl font-bold">Doğalgaz Faturası Hesaplama</h1>
+      <p class="text-primary-100 mt-2">BOTAŞ ve EPDK güncel tarifeleriyle kademe fiyatları ve KDV dahil tam fatura dökümü</p>
+    </div>
+  </div>
+
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+      <div class="lg:col-span-3">
+        <GasCalculator />
+      </div>
+      <div class="lg:col-span-2">
+        <div class="sticky top-4 space-y-6">
+          <AdSenseUnit format="rectangle" />
+
+          <TariffTable
+            title="Mesken Doğalgaz Tarife (2026)"
+            tiers={[
+              { label: 'Kademe 1', price: '16,8847 TL/sm³', range: '0–300 sm³' },
+              { label: 'Kademe 2', price: '19,2451 TL/sm³', range: '301–500 sm³' },
+              { label: 'Kademe 3', price: '22,1095 TL/sm³', range: '500+ sm³' },
+            ]}
+            fixedCharges={[
+              { label: 'Dağıtım Bedeli', value: '65,00 TL/ay' },
+              { label: 'Sayaç Okuma Bedeli', value: '12,50 TL/ay' },
+            ]}
+            taxes={[
+              { label: 'KDV', value: '%20' },
+              { label: 'ÖTV', value: 'Uygulanmaz (mesken)' },
+            ]}
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-12">
+      <AdSenseUnit format="leaderboard" />
+    </div>
+
+    <div class="mt-12">
+      <FAQ questions={faqQuestions} />
+    </div>
+  </div>
+</BaseLayout>

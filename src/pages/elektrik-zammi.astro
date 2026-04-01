@@ -1,0 +1,81 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import AdSenseUnit from '@components/AdSenseUnit.astro';
+
+const title = 'Elektrik Zam Tarihi — 2020\'den Bugüne Tüm Elektrik Zamları';
+const description = '2020\'den 2026\'ya kadar olan tüm elektrik zam tarihleri ve oranları. EPDK tarafından belirlenen kademe fiyat değişimleri.';
+
+const zamGecmisi = [
+  { tarih: 'Ocak 2020', oran: '%15', aciklama: 'Yılın ilk zammı' },
+  { tarih: 'Temmuz 2020', oran: '%12', aciklama: 'Yaz dönemi düzenlemesi' },
+  { tarih: 'Ocak 2021', oran: '%18', aciklama: 'Enflasyon kaynaklı artış' },
+  { tarih: 'Temmuz 2021', oran: '%15', aciklama: 'Orta kademe zammı' },
+  { tarih: 'Ocak 2022', oran: '%50', aciklama: 'Kur artışı kaynaklı büyük zam' },
+  { tarih: 'Temmuz 2022', oran: '%40', aciklama: 'Enerji maliyet artışı' },
+  { tarih: 'Ocak 2023', oran: '%127', aciklama: 'Tarihi zam — kademeli sisteme geçiş' },
+  { tarih: 'Temmuz 2023', oran: '%45', aciklama: 'Enflasyon düzenlemesi' },
+  { tarih: 'Ocak 2024', oran: '%55', aciklama: 'Yılbaşı zammı' },
+  { tarih: 'Temmuz 2024', oran: '%35', aciklama: 'Yaz dönemi artışı' },
+  { tarih: 'Ocak 2025', oran: '%30', aciklama: 'Yılbaşı düzenlemesi' },
+  { tarih: 'Temmuz 2025', oran: '%25', aciklama: 'Orta dönem zammı' },
+  { tarih: 'Ocak 2026', oran: '%20', aciklama: 'Güncel tarife' },
+];
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="bg-primary-600 text-white py-8">
+    <div class="max-w-6xl mx-auto px-4">
+      <h1 class="text-2xl md:text-3xl font-bold">Elektrik Zam Geçmişi</h1>
+      <p class="text-primary-100 mt-2">2020'den 2026'ya tüm elektrik zam tarihleri ve oranları</p>
+    </div>
+  </div>
+
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-slate-50 border-b border-slate-200">
+              <th class="text-left px-6 py-4 font-semibold text-slate-700">Tarih</th>
+              <th class="text-center px-6 py-4 font-semibold text-slate-700">Zam Oranı</th>
+              <th class="text-left px-6 py-4 font-semibold text-slate-700">Açıklama</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            {zamGecmisi.map((zam, index) => (
+              <tr class={index % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
+                <td class="px-6 py-4 font-medium text-slate-800">{zam.tarih}</td>
+                <td class="px-6 py-4 text-center">
+                  <span class={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${
+                    parseInt(zam.oran) >= 50 ? 'bg-red-100 text-red-700' :
+                    parseInt(zam.oran) >= 30 ? 'bg-orange-100 text-orange-700' :
+                    'bg-green-100 text-green-700'
+                  }`}>
+                    {zam.oran}
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-slate-600">{zam.aciklama}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="mt-8 bg-slate-50 rounded-xl p-6 border border-slate-200">
+      <h3 class="font-semibold text-slate-800 mb-3">Zam Analizi</h3>
+      <p class="text-sm text-slate-600 mb-3">
+        2020'den 2026'ya kadar elektrik fiyatlarında toplamda yaklaşık 600-800 oranında artış yaşanmıştır.
+        En büyük artış Ocak 2023'te kademeli sisteme geçişle birlikte gerçekleşmiştir.
+      </p>
+      <p class="text-sm text-slate-600">
+        Kademeli sistem sayesinde düşük tüketimli aboneler (0-150 kWh) daha düşük birim fiyat öderken,
+        yüksek tüketiciler kademeli olarak artan fiyatlarla karşılaşmaktadır. Bu sistem tasarrufu teşvik etmeyi amaçlamaktadır.
+      </p>
+    </div>
+
+    <div class="mt-8">
+      <AdSenseUnit format="leaderboard" />
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,100 @@
+{
+  "lastUpdated": "2026-01-01",
+  "source": "EPDK / BOTAŞ Doğalgaz Tarifesi",
+  "sourceUrl": "https://www.epdk.gov.tr/",
+  "currency": "TRY",
+  "tariffs": {
+    "mesken": {
+      "tiers": [
+        { "min": 0, "max": 300, "pricePerSm3": 16.8847 },
+        { "min": 301, "max": 500, "pricePerSm3": 19.2451 },
+        { "min": 501, "max": null, "pricePerSm3": 22.1095 }
+      ],
+      "fixedCharges": {
+        "distributionFee": 65.00,
+        "meterReadingFee": 12.50
+      },
+      "taxes": {
+        "kdvRate": 0.20,
+        "otvRate": 0.00
+      }
+    },
+    "ticarethane": {
+      "tiers": [
+        { "min": 0, "max": 500, "pricePerSm3": 18.4520 },
+        { "min": 501, "max": 1000, "pricePerSm3": 21.3470 },
+        { "min": 1001, "max": null, "pricePerSm3": 24.8920 }
+      ],
+      "fixedCharges": {
+        "distributionFee": 95.00,
+        "meterReadingFee": 18.75
+      },
+      "taxes": {
+        "kdvRate": 0.20,
+        "otvRate": 0.00
+      }
+    },
+    "sanayi": {
+      "tiers": [
+        { "min": 0, "max": 1000, "pricePerSm3": 15.2340 },
+        { "min": 1001, "max": 5000, "pricePerSm3": 17.8920 },
+        { "min": 5001, "max": null, "pricePerSm3": 20.4560 }
+      ],
+      "fixedCharges": {
+        "distributionFee": 185.00,
+        "meterReadingFee": 32.50
+      },
+      "taxes": {
+        "kdvRate": 0.20,
+        "otvRate": 0.00
+      }
+    }
+  },
+  "distributionCompanies": {
+    "IGDAS": {
+      "name": "İGDAŞ",
+      "regions": ["İstanbul"],
+      "fixedFee": 72.50
+    },
+    "BASKENTGAZ": {
+      "name": "Başkentgaz",
+      "regions": ["Ankara"],
+      "fixedFee": 58.30
+    },
+    "IZGAZ": {
+      "name": "İZGAZ",
+      "regions": ["İzmir"],
+      "fixedFee": 55.80
+    },
+    "BURSA_GAZ": {
+      "name": "Bursagaz",
+      "regions": ["Bursa"],
+      "fixedFee": 62.40
+    },
+    "AYGAZ_DAGITIM": {
+      "name": "Aygaz Dağıtım",
+      "regions": ["Antalya"],
+      "fixedFee": 59.70
+    },
+    "ADAGAZ": {
+      "name": "Adagaz",
+      "regions": ["Adana"],
+      "fixedFee": 61.20
+    },
+    "KOCGAZ": {
+      "name": "Kocgaz",
+      "regions": ["Kocaeli"],
+      "fixedFee": 64.80
+    },
+    "GASKI_GAZ": {
+      "name": "GASKİ Doğalgaz",
+      "regions": ["Gaziantep"],
+      "fixedFee": 52.30
+    },
+    "KOSKİ_GAZ": {
+      "name": "KOSKİ Doğalgaz",
+      "regions": ["Konya"],
+      "fixedFee": 48.90
+    }
+  }
+}

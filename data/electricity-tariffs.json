@@ -1,0 +1,176 @@
+{
+  "lastUpdated": "2026-01-01",
+  "source": "EPDK Tarife Tebliği",
+  "sourceUrl": "https://www.epdk.gov.tr/",
+  "currency": "TRY",
+  "tariffs": {
+    "mesken": {
+      "tekZamanli": {
+        "tiers": [
+          { "min": 0, "max": 150, "pricePerKwh": 3.0180 },
+          { "min": 151, "max": 240, "pricePerKwh": 5.5330 },
+          { "min": 241, "max": null, "pricePerKwh": 6.5390 }
+        ],
+        "fixedCharges": {
+          "distributionFee": 103.36,
+          "meterReadingFee": 19.34,
+          "transmissionPerKwh": 0.2450,
+          "distributionPerKwh": 0.5823
+        },
+        "taxes": {
+          "etvPerKwh": 0.10,
+          "trtBandRate": 0.02,
+          "municipalTaxRate": 0.05,
+          "kdvRate": 0.20
+        }
+      },
+      "cokZamanli": {
+        "gunduz": {
+          "tiers": [
+            { "min": 0, "max": 150, "pricePerKwh": 3.4520 },
+            { "min": 151, "max": 240, "pricePerKwh": 6.1240 },
+            { "min": 241, "max": null, "pricePerKwh": 7.2890 }
+          ]
+        },
+        "puk": {
+          "tiers": [
+            { "min": 0, "max": 150, "pricePerKwh": 2.8760 },
+            { "min": 151, "max": 240, "pricePerKwh": 4.9810 },
+            { "min": 241, "max": null, "pricePerKwh": 5.8450 }
+          ]
+        },
+        "gece": {
+          "tiers": [
+            { "min": 0, "max": 150, "pricePerKwh": 2.1120 },
+            { "min": 151, "max": 240, "pricePerKwh": 3.8740 },
+            { "min": 241, "max": null, "pricePerKwh": 4.5770 }
+          ]
+        },
+        "fixedCharges": {
+          "distributionFee": 103.36,
+          "meterReadingFee": 19.34,
+          "transmissionPerKwh": 0.2450,
+          "distributionPerKwh": 0.5823
+        },
+        "taxes": {
+          "etvPerKwh": 0.10,
+          "trtBandRate": 0.02,
+          "municipalTaxRate": 0.05,
+          "kdvRate": 0.20
+        }
+      }
+    },
+    "ticarethane": {
+      "tekZamanli": {
+        "tiers": [
+          { "min": 0, "max": 200, "pricePerKwh": 3.8920 },
+          { "min": 201, "max": 500, "pricePerKwh": 6.2140 },
+          { "min": 501, "max": null, "pricePerKwh": 7.4580 }
+        ],
+        "fixedCharges": {
+          "distributionFee": 145.72,
+          "meterReadingFee": 19.34,
+          "transmissionPerKwh": 0.3120,
+          "distributionPerKwh": 0.6847
+        },
+        "taxes": {
+          "etvPerKwh": 0.10,
+          "trtBandRate": 0.02,
+          "municipalTaxRate": 0.05,
+          "kdvRate": 0.20
+        }
+      },
+      "cokZamanli": {
+        "gunduz": {
+          "tiers": [
+            { "min": 0, "max": 200, "pricePerKwh": 4.2340 },
+            { "min": 201, "max": 500, "pricePerKwh": 6.8920 },
+            { "min": 501, "max": null, "pricePerKwh": 8.1240 }
+          ]
+        },
+        "puk": {
+          "tiers": [
+            { "min": 0, "max": 200, "pricePerKwh": 3.5670 },
+            { "min": 201, "max": 500, "pricePerKwh": 5.7890 },
+            { "min": 501, "max": null, "pricePerKwh": 6.8920 }
+          ]
+        },
+        "gece": {
+          "tiers": [
+            { "min": 0, "max": 200, "pricePerKwh": 2.8940 },
+            { "min": 201, "max": 500, "pricePerKwh": 4.5670 },
+            { "min": 501, "max": null, "pricePerKwh": 5.4320 }
+          ]
+        },
+        "fixedCharges": {
+          "distributionFee": 145.72,
+          "meterReadingFee": 19.34,
+          "transmissionPerKwh": 0.3120,
+          "distributionPerKwh": 0.6847
+        },
+        "taxes": {
+          "etvPerKwh": 0.10,
+          "trtBandRate": 0.02,
+          "municipalTaxRate": 0.05,
+          "kdvRate": 0.20
+        }
+      }
+    },
+    "sanayi": {
+      "tekZamanli": {
+        "tiers": [
+          { "min": 0, "max": 500, "pricePerKwh": 3.2450 },
+          { "min": 501, "max": 1000, "pricePerKwh": 5.1280 },
+          { "min": 1001, "max": null, "pricePerKwh": 6.0890 }
+        ],
+        "fixedCharges": {
+          "distributionFee": 287.54,
+          "meterReadingFee": 32.18,
+          "transmissionPerKwh": 0.1890,
+          "distributionPerKwh": 0.4523
+        },
+        "taxes": {
+          "etvPerKwh": 0.10,
+          "trtBandRate": 0.02,
+          "municipalTaxRate": 0.05,
+          "kdvRate": 0.20
+        }
+      },
+      "cokZamanli": {
+        "gunduz": {
+          "tiers": [
+            { "min": 0, "max": 500, "pricePerKwh": 3.6780 },
+            { "min": 501, "max": 1000, "pricePerKwh": 5.7890 },
+            { "min": 1001, "max": null, "pricePerKwh": 6.8920 }
+          ]
+        },
+        "puk": {
+          "tiers": [
+            { "min": 0, "max": 500, "pricePerKwh": 3.0120 },
+            { "min": 501, "max": 1000, "pricePerKwh": 4.7890 },
+            { "min": 1001, "max": null, "pricePerKwh": 5.6780 }
+          ]
+        },
+        "gece": {
+          "tiers": [
+            { "min": 0, "max": 500, "pricePerKwh": 2.3450 },
+            { "min": 501, "max": 1000, "pricePerKwh": 3.8920 },
+            { "min": 1001, "max": null, "pricePerKwh": 4.5670 }
+          ]
+        },
+        "fixedCharges": {
+          "distributionFee": 287.54,
+          "meterReadingFee": 32.18,
+          "transmissionPerKwh": 0.1890,
+          "distributionPerKwh": 0.4523
+        },
+        "taxes": {
+          "etvPerKwh": 0.10,
+          "trtBandRate": 0.02,
+          "municipalTaxRate": 0.05,
+          "kdvRate": 0.20
+        }
+      }
+    }
+  }
+}

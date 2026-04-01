@@ -1,0 +1,138 @@
+---
+import provincesData from '../../../data/provinces.json';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import ElectricityCalculator from '@components/ElectricityCalculator.astro';
+import FAQ from '@components/FAQ.astro';
+import AdSenseUnit from '@components/AdSenseUnit.astro';
+
+export async function getStaticPaths() {
+  const provinces = provincesData.provinces;
+
+  return provinces.map((province) => ({
+    params: { il: province.slug },
+    props: { province },
+  }));
+}
+
+const { province } = Astro.props;
+const dist = province.distributionCompany;
+const distName = typeof dist === 'object' ? `${dist.asian} / ${dist.european}` : dist;
+
+const title = `${province.name} Elektrik Fatura Hesaplama 2026 — ${distName} Tarifesi`;
+const description = `${province.name} ili için ${distName} dağıtım şirketi elektrik tarifesi. Güncel kademe fiyatları, vergiler ve tam fatura hesaplama.`;
+
+const faqQuestions = [
+  {
+    question: `${province.name} bölgesinde hangi dağıtım şirketi hizmet veriyor?`,
+    answer: `${province.name} bölgesinde ${distName} dağıtım şirketi hizmet vermektedir.`,
+  },
+  {
+    question: `${province.name} bölgesinde doğalgaz var mı?`,
+    answer: province.gasCompany
+      ? `Evet, ${province.name} bölgesinde ${province.gasCompany} doğalgaz dağıtımı yapmaktadır.`
+      : `${province.name} bölgesinde doğalgaz altyapısı sınırlıdır veya henüz bulunmamaktadır.`,
+  },
+  {
+    question: `${province.name} su tarifesini nereden öğrenebilirim?`,
+    answer: province.hasWaterTariff
+      ? `${province.name} su tarifeleri ${province.waterAuthority} tarafından belirlenmektedir. Su faturası hesaplama sayfamızdan detaylı bilgi alabilirsiniz.`
+      : `${province.name} su tarifeleri belediye tarafından belirlenmektedir. Detaylı bilgi için yerel belediyenize başvurabilirsiniz.`,
+  },
+  {
+    question: `${province.name} bölgesinde elektrik kesintisi olduğunda kimi aramalıyım?`,
+    answer: `${distName} çağrı merkezini arayarak arıza bildirimi yapabilirsiniz. EPDK tarafından belirlenen kesinti tazminat haklarınızı da öğrenebilirsiniz.`,
+  },
+];
+
+const schemaMarkup = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: title,
+  description,
+  url: `https://www.elektrikfatura.com/iller/${province.slug}`,
+  mainEntity: {
+    '@type': 'FAQPage',
+    mainEntity: faqQuestions.map((q) => ({
+      '@type': 'Question',
+      name: q.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: q.answer,
+      },
+    })),
+  },
+});
+---
+
+<BaseLayout title={title} description={description} schemaMarkup={schemaMarkup}>
+  <div class="bg-primary-600 text-white py-8">
+    <div class="max-w-6xl mx-auto px-4">
+      <nav class="text-sm text-primary-200 mb-2">
+        <a href="/" class="hover:text-white">Ana Sayfa</a>
+        <span class="mx-2">/</span>
+        <a href="/iller" class="hover:text-white">İller</a>
+        <span class="mx-2">/</span>
+        <span class="text-white">{province.name}</span>
+      </nav>
+      <h1 class="text-2xl md:text-3xl font-bold">{province.name} Elektrik Fatura Hesaplama 2026</h1>
+      <p class="text-primary-100 mt-2">{distName} dağıtım şirketi güncel tarifesi</p>
+    </div>
+  </div>
+
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+        <h3 class="text-sm font-medium text-slate-500 mb-1">Dağıtım Şirketi</h3>
+        <p class="text-lg font-bold text-slate-800">{distName}</p>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+        <h3 class="text-sm font-medium text-slate-500 mb-1">Bölge</h3>
+        <p class="text-lg font-bold text-slate-800">{province.region}</p>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+        <h3 class="text-sm font-medium text-slate-500 mb-1">Doğalgaz</h3>
+        <p class="text-lg font-bold text-slate-800">{province.gasCompany}</p>
+      </div>
+    </div>
+
+    <ElectricityCalculator />
+
+    <div class="mt-8">
+      <AdSenseUnit format="leaderboard" />
+    </div>
+
+    {province.hasWaterTariff && (
+      <div class="mt-8 bg-primary-50 rounded-xl p-6 border border-primary-200">
+        <h3 class="font-semibold text-primary-800 mb-2">{province.waterAuthority} Su Tarifesi</h3>
+        <p class="text-sm text-primary-700">
+          {province.name} ili su tarifeleri {province.waterAuthority} tarafından belirlenmektedir.
+          <a href="/su-fatura-hesaplama" class="underline font-medium"> Su faturası hesaplama →</a>
+        </p>
+      </div>
+    )}
+
+    <div class="mt-8">
+      <FAQ questions={faqQuestions} />
+    </div>
+
+    {province.neighborProvinces && province.neighborProvinces.length > 0 && (
+      <div class="mt-8">
+        <h3 class="font-semibold text-slate-800 mb-4">Komşu İller</h3>
+        <div class="flex flex-wrap gap-2">
+          {province.neighborProvinces.map((neighborId) => {
+            const neighbor = provincesData.provinces.find((p) => p.id === neighborId);
+            if (!neighbor) return null;
+            return (
+              <a
+                href={`/iller/${neighbor.slug}`}
+                class="bg-slate-100 hover:bg-primary-50 hover:text-primary-700 rounded-lg px-4 py-2 text-sm transition-colors"
+              >
+                {neighbor.name}
+              </a>
+            );
+          })}
+        </div>
+      </div>
+    )}
+  </div>
+</BaseLayout>

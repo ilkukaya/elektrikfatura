@@ -1,0 +1,24 @@
+---
+interface Props {
+  items: Array<{ label: string; value: number; isTotal?: boolean }>;
+  currency?: string;
+}
+
+const { items, currency = 'TRY' } = Astro.props;
+---
+
+<div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+  <div class="p-4 bg-slate-50 border-b border-slate-200">
+    <h3 class="font-semibold text-slate-800">Fatura Detayı</h3>
+  </div>
+  <div class="divide-y divide-slate-100">
+    {items.map((item) => (
+      <div class={`flex justify-between items-center px-4 py-3 ${item.isTotal ? 'bg-primary-50 font-bold' : ''}`}>
+        <span class={item.isTotal ? 'text-primary-800' : 'text-slate-600'}>{item.label}</span>
+        <span class={item.isTotal ? 'text-primary-800' : 'text-slate-800 font-medium'}>
+          {new Intl.NumberFormat('tr-TR', { style: 'currency', currency }).format(item.value)}
+        </span>
+      </div>
+    ))}
+  </div>
+</div>

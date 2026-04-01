@@ -1,0 +1,62 @@
+---
+const navItems = [
+  { label: 'Elektrik', href: '/elektrik-fatura-hesaplama' },
+  { label: 'Doğalgaz', href: '/dogalgaz-fatura-hesaplama' },
+  { label: 'Su', href: '/su-fatura-hesaplama' },
+  { label: 'Tarifeler', href: '/elektrik-tarifeleri' },
+  { label: 'Blog', href: '/blog' },
+];
+---
+
+<header class="bg-white shadow-sm border-b border-slate-200">
+  <div class="max-w-6xl mx-auto px-4">
+    <div class="flex items-center justify-between h-16">
+      <a href="/" class="flex items-center gap-2">
+        <svg class="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+        <span class="text-xl font-bold text-primary-600">elektrikfatura.com</span>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-6">
+        {navItems.map((item) => (
+          <a
+            href={item.href}
+            class="text-slate-600 hover:text-primary-600 font-medium transition-colors"
+          >
+            {item.label}
+          </a>
+        ))}
+      </nav>
+
+      <button
+        id="mobile-menu-btn"
+        class="md:hidden p-2 rounded-lg hover:bg-slate-100"
+        aria-label="Menüyü aç"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
+
+    <nav id="mobile-menu" class="md:hidden hidden pb-4">
+      {navItems.map((item) => (
+        <a
+          href={item.href}
+          class="block py-2 text-slate-600 hover:text-primary-600 font-medium"
+        >
+          {item.label}
+        </a>
+      ))}
+    </nav>
+  </div>
+</header>
+
+<script>
+  const btn = document.getElementById('mobile-menu-btn');
+  const menu = document.getElementById('mobile-menu');
+  btn?.addEventListener('click', () => {
+    menu?.classList.toggle('hidden');
+  });
+</script>

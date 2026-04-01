@@ -1,0 +1,53 @@
+---
+interface Props {
+  slot?: string;
+  format?: 'auto' | 'rectangle' | 'leaderboard' | 'mobile';
+}
+
+const { slot: adSlot = '', format = 'auto' } = Astro.props;
+const isDev = import.meta.env.DEV;
+
+const formatMap = {
+  auto: { width: 'auto', height: 'auto' },
+  rectangle: { width: '336', height: '280' },
+  leaderboard: { width: '728', height: '90' },
+  mobile: { width: '320', height: '100' },
+};
+
+const dimensions = formatMap[format];
+const minHeight = dimensions.height === 'auto' ? '100px' : dimensions.height + 'px';
+const adSlotAttr = adSlot ? adSlot : '';
+---
+
+{isDev ? (
+  <div
+    class="bg-slate-100 border-2 border-dashed border-slate-300 rounded-lg flex items-center justify-center text-slate-400 text-sm"
+    style={`min-height: ${minHeight}`}
+  >
+    Reklam Alanı ({format})
+  </div>
+) : (
+  <div
+    class="ad-container"
+    style={`min-height: ${minHeight}`}
+  >
+    <ins
+      class="adsbygoogle"
+      style="display:block"
+      data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+      data-ad-slot={adSlotAttr}
+      data-ad-format={format}
+      data-full-width-responsive={format === 'auto' ? 'true' : 'false'}
+    ></ins>
+  </div>
+)}
+
+<script is:inline>
+  if (typeof adsbygoogle !== 'undefined') {
+    try {
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    } catch (e) {
+      /* AdSense not loaded */
+    }
+  }
+</script>

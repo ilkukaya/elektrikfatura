@@ -1,0 +1,88 @@
+---
+import provincesData from '../../data/provinces.json';
+
+const provinces = provincesData.provinces;
+---
+
+<div
+  x-data="provinceSelector()"
+  class="relative"
+>
+  <label class="block text-sm font-medium text-slate-700 mb-2">İl Seçiniz</label>
+
+  <div class="relative">
+    <input
+      type="text"
+      x-model="search"
+      @focus="open = true"
+      @input="open = true"
+      placeholder="İl ara..."
+      class="w-full border border-slate-300 rounded-lg px-4 py-3 pr-10 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+    />
+    <svg class="w-5 h-5 absolute right-3 top-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+    </svg>
+  </div>
+
+  <div
+    x-show="open && filteredProvinces.length > 0"
+    @click.away="open = false"
+    class="absolute z-50 mt-1 w-full bg-white border border-slate-200 rounded-lg shadow-lg max-h-60 overflow-y-auto"
+  >
+    <template x-for="province in filteredProvinces" :key="province.id">
+      <button
+        type="button"
+        @click="selectProvince(province)"
+        class="w-full text-left px-4 py-2 hover:bg-primary-50 transition-colors"
+        :class="selectedProvince?.id === province.id ? 'bg-primary-50 text-primary-700' : 'text-slate-700'"
+      >
+        <span x-text="province.name"></span>
+        <span class="text-xs text-slate-400 ml-2" x-text="province.region"></span>
+      </button>
+    </template>
+  </div>
+
+  <template x-if="selectedProvince">
+    <p class="text-sm text-slate-500 mt-2">
+      Dağıtım Şirketi: <span class="font-medium text-slate-700" x-text="getDistributionCompany()"></span>
+    </p>
+  </template>
+</div>
+
+<script>
+  const provincesData = provinces;
+
+  function provinceSelector() {
+    return {
+      search: '',
+      open: false,
+      selectedProvince: null,
+
+      get filteredProvinces() {
+        if (!this.search) return provincesData;
+        const q = this.search.toLowerCase();
+        return provincesData.filter(
+          (p) =>
+            p.name.toLowerCase().includes(q) ||
+            p.region.toLowerCase().includes(q)
+        );
+      },
+
+      selectProvince(province) {
+        this.selectedProvince = province;
+        this.search = province.name;
+        this.open = false;
+        this.$dispatch('province-selected', province);
+      },
+
+      getDistributionCompany() {
+        if (!this.selectedProvince) return '';
+        const dist = this.selectedProvince.distributionCompany;
+        if (typeof dist === 'object') {
+          return dist.asian + ' / ' + dist.european;
+        }
+        return dist;
+      },
+    };
+  }
+</script>

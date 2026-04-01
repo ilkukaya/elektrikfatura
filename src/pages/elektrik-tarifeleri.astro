@@ -1,0 +1,98 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import TariffTable from '@components/TariffTable.astro';
+import AdSenseUnit from '@components/AdSenseUnit.astro';
+import electricityData from '../../data/electricity-tariffs.json';
+
+const tariffs = electricityData.tariffs;
+const lastUpdated = electricityData.lastUpdated;
+
+const title = 'Elektrik Tarifeleri 2026 — EPDK Güncel Kademe Fiyatları';
+const description = 'EPDK 2026 elektrik tarifeleri: Mesken, ticarethane ve sanayi aboneleri için kademe fiyatları, sabit ücretler, vergiler ve tüm detaylar.';
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="bg-primary-600 text-white py-8">
+    <div class="max-w-6xl mx-auto px-4">
+      <h1 class="text-2xl md:text-3xl font-bold">Elektrik Tarifeleri 2026</h1>
+      <p class="text-primary-100 mt-2">EPDK güncel tarifeleri — Mesken, Ticarethane ve Sanayi</p>
+    </div>
+  </div>
+
+  <div class="max-w-6xl mx-auto px-4 py-8 space-y-8">
+    <AdSenseUnit format="leaderboard" />
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <TariffTable
+        title="Mesken — Tek Zamanlı"
+        tiers={tariffs.mesken.tekZamanli.tiers.map((t) => ({
+          label: '',
+          price: t.pricePerKwh.toFixed(4) + ' TL/kWh',
+          range: `${t.min}–${t.max ?? '+'} kWh`,
+        }))}
+        fixedCharges={[
+          { label: 'Dağıtım Bedeli', value: tariffs.mesken.tekZamanli.fixedCharges.distributionFee.toFixed(2) + ' TL/ay' },
+          { label: 'Sayaç Okuma Bedeli', value: tariffs.mesken.tekZamanli.fixedCharges.meterReadingFee.toFixed(2) + ' TL/ay' },
+          { label: 'İletim Bedeli', value: tariffs.mesken.tekZamanli.fixedCharges.transmissionPerKwh.toFixed(4) + ' TL/kWh' },
+          { label: 'Dağıtım Sistemi Kullanım', value: tariffs.mesken.tekZamanli.fixedCharges.distributionPerKwh.toFixed(4) + ' TL/kWh' },
+        ]}
+        taxes={[
+          { label: 'ETV', value: tariffs.mesken.tekZamanli.taxes.etvPerKwh.toFixed(2) + ' TL/kWh' },
+          { label: 'TRT Payı', value: '%' + (tariffs.mesken.tekZamanli.taxes.trtBandRate * 100).toFixed(0) },
+          { label: 'Belediye Vergisi', value: '%' + (tariffs.mesken.tekZamanli.taxes.municipalTaxRate * 100).toFixed(0) },
+          { label: 'KDV', value: '%' + (tariffs.mesken.tekZamanli.taxes.kdvRate * 100).toFixed(0) },
+        ]}
+      />
+
+      <TariffTable
+        title="Ticarethane — Tek Zamanlı"
+        tiers={tariffs.ticarethane.tekZamanli.tiers.map((t) => ({
+          label: '',
+          price: t.pricePerKwh.toFixed(4) + ' TL/kWh',
+          range: `${t.min}–${t.max ?? '+'} kWh`,
+        }))}
+        fixedCharges={[
+          { label: 'Dağıtım Bedeli', value: tariffs.ticarethane.tekZamanli.fixedCharges.distributionFee.toFixed(2) + ' TL/ay' },
+          { label: 'Sayaç Okuma Bedeli', value: tariffs.ticarethane.tekZamanli.fixedCharges.meterReadingFee.toFixed(2) + ' TL/ay' },
+          { label: 'İletim Bedeli', value: tariffs.ticarethane.tekZamanli.fixedCharges.transmissionPerKwh.toFixed(4) + ' TL/kWh' },
+          { label: 'Dağıtım Sistemi Kullanım', value: tariffs.ticarethane.tekZamanli.fixedCharges.distributionPerKwh.toFixed(4) + ' TL/kWh' },
+        ]}
+        taxes={[
+          { label: 'ETV', value: tariffs.ticarethane.tekZamanli.taxes.etvPerKwh.toFixed(2) + ' TL/kWh' },
+          { label: 'TRT Payı', value: '%' + (tariffs.ticarethane.tekZamanli.taxes.trtBandRate * 100).toFixed(0) },
+          { label: 'Belediye Vergisi', value: '%' + (tariffs.ticarethane.tekZamanli.taxes.municipalTaxRate * 100).toFixed(0) },
+          { label: 'KDV', value: '%' + (tariffs.ticarethane.tekZamanli.taxes.kdvRate * 100).toFixed(0) },
+        ]}
+      />
+
+      <TariffTable
+        title="Sanayi — Tek Zamanlı"
+        tiers={tariffs.sanayi.tekZamanli.tiers.map((t) => ({
+          label: '',
+          price: t.pricePerKwh.toFixed(4) + ' TL/kWh',
+          range: `${t.min}–${t.max ?? '+'} kWh`,
+        }))}
+        fixedCharges={[
+          { label: 'Dağıtım Bedeli', value: tariffs.sanayi.tekZamanli.fixedCharges.distributionFee.toFixed(2) + ' TL/ay' },
+          { label: 'Sayaç Okuma Bedeli', value: tariffs.sanayi.tekZamanli.fixedCharges.meterReadingFee.toFixed(2) + ' TL/ay' },
+          { label: 'İletim Bedeli', value: tariffs.sanayi.tekZamanli.fixedCharges.transmissionPerKwh.toFixed(4) + ' TL/kWh' },
+          { label: 'Dağıtım Sistemi Kullanım', value: tariffs.sanayi.tekZamanli.fixedCharges.distributionPerKwh.toFixed(4) + ' TL/kWh' },
+        ]}
+        taxes={[
+          { label: 'ETV', value: tariffs.sanayi.tekZamanli.taxes.etvPerKwh.toFixed(2) + ' TL/kWh' },
+          { label: 'TRT Payı', value: '%' + (tariffs.sanayi.tekZamanli.taxes.trtBandRate * 100).toFixed(0) },
+          { label: 'Belediye Vergisi', value: '%' + (tariffs.sanayi.tekZamanli.taxes.municipalTaxRate * 100).toFixed(0) },
+          { label: 'KDV', value: '%' + (tariffs.sanayi.tekZamanli.taxes.kdvRate * 100).toFixed(0) },
+        ]}
+      />
+    </div>
+
+    <div class="bg-slate-50 rounded-xl p-6 border border-slate-200">
+      <h3 class="font-semibold text-slate-800 mb-3">Tarife Bilgisi</h3>
+      <p class="text-sm text-slate-600">Son güncelleme: {new Date(lastUpdated).toLocaleDateString('tr-TR')} — Kaynak: EPDK Tarife Tebliği</p>
+      <p class="text-sm text-slate-600 mt-2">Tarifeler EPDK tarafından yayımlanan resmi tebliğlere dayanmaktadır. Değişiklikler otomatik olarak güncellenir.</p>
+    </div>
+
+    <AdSenseUnit format="leaderboard" />
+  </div>
+</BaseLayout>

@@ -1,0 +1,120 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import WaterCalculator from '@components/WaterCalculator.astro';
+import AdSenseUnit from '@components/AdSenseUnit.astro';
+import FAQ from '@components/FAQ.astro';
+import waterData from '../../data/water-tariffs.json';
+
+const lastUpdated = waterData.lastUpdated;
+
+const title = 'Su Faturası Hesaplama — Büyükşehir Tarifeleri 2026';
+const description = 'İSKİ, ASKİ, İZSU ve diğer büyükşehir su tarifeleriyle su faturanızı hesaplayın. Atıksu bedeli ve KDV dahil tam fatura dökümü.';
+
+const faqQuestions = [
+  {
+    question: 'Su faturasında KDV oranı kaçtır?',
+    answer: 'Su faturalarında KDV oranı %8 olarak uygulanmaktadır. Bu oran, diğer enerji faturalarındaki %20 KDV\'den önemli ölçüde düşüktür.',
+  },
+  {
+    question: 'Atıksu bedeli nedir?',
+    answer: 'Atıksu bedeli, kullandığınız suyun arıtılması ve kanalizasyon sistemi üzerinden uzaklaştırılması maliyetidir. Genellikle su bedelinin %70-%90\'ı arasında değişir.',
+  },
+  {
+    question: 'Su tarifeleri neden şehre göre değişir?',
+    answer: 'Su tarifeleri belediyeler tarafından belirlendiğinden şehirden şehre farklılık gösterir. Her büyükşehir belediyesi kendi su ve kanalizasyon idaresi (İSKİ, ASKİ, İZSU vb.) üzerinden tarife belirler.',
+  },
+  {
+    question: 'Ortalama bir aile ayda kaç m³ su tüketir?',
+    answer: '4 kişilik bir aile ortalama 12-18 m³/ay su tüketir. Bu değer; bahçe sulama, çamaşır/bulaşık makinesi kullanımı ve kişisel alışkanlıklara göre değişebilir.',
+  },
+  {
+    question: 'Su faturasında kademe sistemi var mı?',
+    answer: 'Evet, su tarifelerinde kademeli fiyatlandırma uygulanır. Düşük tüketim kademelerinde birim fiyat daha düşük, yüksek tüketim kademelerinde daha yüksektir. Bu sistem tasarrufu teşvik eder.',
+  },
+  {
+    question: 'Su faturamı nasıl düşürebilirim?',
+    answer: 'Muslukları tam kapatın, sızıntıları onarın, tasarruflu duş başlığı kullanın, çamaşır ve bulaşık makinesini tam dolmadan çalıştırmayın, bahçe sulamasını sabah erken saatlerde yapın.',
+  },
+  {
+    question: 'Abonelik bedeli nedir?',
+    answer: 'Abonelik bedeli, su sayacının bakımı, okunması ve faturalandırma işlemleri için alınan sabit aylık ücrettir. Şehre göre 10-20 TL arasında değişir.',
+  },
+  {
+    question: 'Su tarifeleri ne zaman güncellenir?',
+    answer: 'Su tarifeleri belediye meclisleri tarafından genellikle yılda bir kez güncellenir. Son güncelleme {lastUpdated} tarihinde yapılmıştır.',
+  },
+];
+
+const schemaMarkup = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': ['WebApplication', 'FAQPage'],
+  name: 'Su Faturası Hesaplama',
+  url: 'https://www.elektrikfatura.com/su-fatura-hesaplama',
+  applicationCategory: 'UtilityApplication',
+  operatingSystem: 'Any',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'TRY',
+  },
+  mainEntity: faqQuestions.map((q) => ({
+    '@type': 'Question',
+    name: q.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: q.answer,
+    },
+  })),
+});
+---
+
+<BaseLayout title={title} description={description} schemaMarkup={schemaMarkup}>
+  <div class="bg-primary-600 text-white py-8">
+    <div class="max-w-6xl mx-auto px-4">
+      <h1 class="text-2xl md:text-3xl font-bold">Su Faturası Hesaplama</h1>
+      <p class="text-primary-100 mt-2">Büyükşehir belediyelerinin güncel su tarifeleriyle atıksu ve KDV dahil tam fatura dökümü</p>
+    </div>
+  </div>
+
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+      <div class="lg:col-span-3">
+        <WaterCalculator />
+      </div>
+      <div class="lg:col-span-2">
+        <div class="sticky top-4 space-y-6">
+          <AdSenseUnit format="rectangle" />
+
+          <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <h3 class="font-semibold text-slate-800 mb-4">Büyükşehir Su Tarifeleri</h3>
+            <div class="space-y-4">
+              {Object.entries(waterData.tariffs).map(([key, tariff]) => (
+                <div class="border-b border-slate-100 pb-3 last:border-0">
+                  <h4 class="font-medium text-primary-600">{tariff.authority}</h4>
+                  <div class="text-sm text-slate-600 mt-1">
+                    {tariff.water.tiers.map((t, i) => (
+                      <span class="inline-block mr-3">
+                        {t.min}–{t.max ?? '+'} m³: <strong>{t.pricePerM3.toFixed(2)} TL</strong>
+                      </span>
+                    ))}
+                  </div>
+                  <p class="text-xs text-slate-400 mt-1">
+                    Atıksu: %{(tariff.wastewater.rate * 100).toFixed(0)} — KDV: %{(tariff.taxes.kdvRate * 100).toFixed(0)}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-12">
+      <AdSenseUnit format="leaderboard" />
+    </div>
+
+    <div class="mt-12">
+      <FAQ questions={faqQuestions} />
+    </div>
+  </div>
+</BaseLayout>
