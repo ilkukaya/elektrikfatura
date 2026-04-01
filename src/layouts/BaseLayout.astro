@@ -41,7 +41,7 @@ const canonicalUrl = canonical ?? Astro.url.href;
     <meta name="robots" content="index, follow" />
     <meta name="theme-color" content="#1D4ED8" />
 
-    {schemaMarkup && <Fragment set:html={schemaMarkup} />}
+    {schemaMarkup && <script type="application/ld+json" set:html={schemaMarkup} />}
   </head>
   <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
     <Header />
